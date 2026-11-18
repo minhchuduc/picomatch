@@ -32,6 +32,13 @@ Changelog entries are classified using the following labels _(from [keep-a-chang
 
 </details>
 
+## Unreleased
+
+### Security
+
+* Fixed a regular expression denial of service in repeated extglobs whose branches hold a star, such as `+(*a)`, `+(*)x` or `+(a|*a)` ([GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf), CVE-2026-112366). When the alternatives' language is closed under concatenation, `+(...)` compiles like `@(...)` and `*(...)` like `?(...)`; when only some branches hold a trailing (or leading) star, only the star-free branches stay repeated; any other repeated extglob with a star or a negation is compiled literally, like the other risky forms that `maxExtglobRecursion` already guards.
+* Repeated alternatives that are not uniquely decodable (`+(ab|a|b)`, `+(ab|ab)`, including alternatives inside `@(...)`) and single-character alternatives that overlap (`+(a|[a])`) are now treated as risky too.
+
 ## 4.0.7 (2026-08-24)
 
 ### Fixed
